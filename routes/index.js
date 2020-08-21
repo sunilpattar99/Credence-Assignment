@@ -7,15 +7,18 @@ const Movie = require("../models/Movies");
 router.get("/moviesApi" , async (req, res)=>{
     try{
         const allMovies = await Movie.find();
-        res.json(allMovies);
+        // res.render("allMovies.ejs" , {allMovies: allMovies})     uncomment this statement if you want to view it in ejs format
+        res.json(allMovies);   //comment this if you want to view ejs format
     }catch(err){
-        res.status(404).json({error:"Something went wrong!"});
+        return res.status(404).json({error:"Something went wrong!"});
     }
 })
 
 //Getting One movie with id
 router.get("/moviesApi/:id" ,getMovie, (req, res)=>{
-    res.json(res.movie);
+    const foundMovie = res.movie;
+    // res.render("movieById.ejs" , {foundMovie :foundMovie })   //uncomment this statement if you want to view it in ejs format
+    res.json(foundMovie);    //comment this if you want to view ejs format
 })
 
 //searching movie with name(fuzzy search)
@@ -26,7 +29,8 @@ router.get("/moviesApi/search/:id" , (req , res)=>{
             if(err){
                 console.log(err);
             }else{
-                res.json(foundMovie);
+                // res.render("moviesByName.ejs" , {foundMovie:foundMovie})  uncomment this statement if you want to view it in ejs format
+                res.json(foundMovie);   //comment this if you want to view ejs format 
             }
         });
     } 
@@ -74,6 +78,7 @@ router.delete("/moviesApi/:id" ,getMovie, async (req, res)=>{
     }
 })
 
+//middelwares
 async function getMovie(req, res, next){
     let movie
     try{
@@ -89,6 +94,7 @@ async function getMovie(req, res, next){
     next();
 }
 
+//function for fuzzy search
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
