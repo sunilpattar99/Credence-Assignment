@@ -12,14 +12,14 @@ router.get("/moviesApi" , async (req, res)=>{
     }catch(err){
         return res.status(404).json({error:"Something went wrong!"});
     }
-})
+});
 
 //Getting One movie with id
 router.get("/moviesApi/:id" ,getMovie, (req, res)=>{
     const foundMovie = res.movie;
     // res.render("movieById.ejs" , {foundMovie :foundMovie })   //uncomment this statement if you want to view it in ejs format
     res.json(foundMovie);    //comment this if you want to view ejs format
-})
+});
 
 //searching movie with name(fuzzy search)
 router.get("/moviesApi/search/:id" , (req , res)=>{
@@ -39,18 +39,24 @@ router.get("/moviesApi/search/:id" , (req , res)=>{
 //Creating new movie
 router.post("/moviesApi" , async (req, res)=>{
     const {name, img, summary} = req.body;
+
+    if(!name || !img || !summary){
+        return res.status(400).json({message:"Please add all the values"});
+    }
+    
     const newMovie = new Movie({
         name,
         img,
         summary
-    })
+    });
+
     try{
         const addMovie = await newMovie.save();
         res.json(addMovie);
     }catch (err){
         res.status(400).json({error:"Unable to add new movie" });
     }
-})
+});
 
 //Updating movie
 router.patch("/moviesApi/:id" ,getMovie, async (req, res)=>{
@@ -66,7 +72,7 @@ router.patch("/moviesApi/:id" ,getMovie, async (req, res)=>{
     } catch (error) {
         res.status(400).json({error:"Cannoot Update the movie"});
     }
-})
+});
 
 //delete movie
 router.delete("/moviesApi/:id" ,getMovie, async (req, res)=>{
@@ -76,11 +82,11 @@ router.delete("/moviesApi/:id" ,getMovie, async (req, res)=>{
     } catch (error) {
         res.status(400).json({error:"Something Went wrong"});
     }
-})
+});
 
 //middelwares
 async function getMovie(req, res, next){
-    let movie
+    let movie;
     try{
         movie = await Movie.findById(req.params.id);
         if(movie === null){
